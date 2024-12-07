@@ -128,6 +128,12 @@ const Introduction: React.FC = () => {
     }
   };
 
+  const handleNext = () => {
+    if(storyStep < 4){
+      setStoryStep(storyStep + 1)
+    }
+  }
+
   const currentStep = storySteps[storyStep];
 
   return (
@@ -148,13 +154,21 @@ const Introduction: React.FC = () => {
       </div>
 
       {storyStep > 0 && (
-        <button
-          onClick={handlePrevious}
-          className="absolute bottom-8 right-8 px-4 py-2 bg-gray-500 text-white rounded-lg shadow-md hover:bg-gray-600"
-        >
-          Previous
-        </button>
-      )}
+  <div className="absolute bottom-8 right-8 flex space-x-4">
+    <button
+      onClick={handlePrevious}
+      className="px-4 py-2 bg-gray-500 text-white rounded-lg shadow-md hover:bg-gray-600"
+    >
+      Previous
+    </button>
+    <button
+      onClick={handleNext}
+      className="px-4 py-2 bg-gray-500 text-white rounded-lg shadow-md hover:bg-gray-600"
+    >
+      Next
+    </button>
+  </div>
+)}
     </div>
   );
 };
