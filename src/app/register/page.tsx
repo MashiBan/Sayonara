@@ -66,8 +66,9 @@ const RegisterForm: React.FC = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center bg-blue-100">
+    <div className="h-screen flex flex-col items-center justify-center bg-green-200">
       <h1 className="text-6xl font-serif font-bold italic mb-20">Sayonara, Seniors!</h1>
+      <p className="text-2xl font-bold mb-10">KIET-25</p>
       
       {/* Confetti Explosion */}
       {confetti && <ConfettiExplosion />}
@@ -124,6 +125,7 @@ const RegisterForm: React.FC = () => {
           </Link>
         </p>
         <p className="text-sm mt-3">Use your college email-id</p>
+        <p className="text-sm mt-6 underline">Please verify your email-id after registration.</p>
       </div>
     </div>
   );

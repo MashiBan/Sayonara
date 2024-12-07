@@ -67,8 +67,9 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center bg-blue-100">
+    <div className="h-screen flex flex-col items-center justify-center bg-pink-200">
       <h1 className="text-6xl font-serif font-bold italic mb-20">Sayonara, Seniors!</h1>
+      <p className="text-2xl font-bold mb-10">KIET-25</p>
       <Card>
         <CardHeader>
           <h2 className="text-2xl font-bold">Welcome Back! Log in to connect</h2>
