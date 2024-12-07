@@ -8,6 +8,7 @@ import { auth, firestore } from "@/firebase/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { collection, addDoc, getDoc, doc } from "firebase/firestore";
 import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
 
 const Introduction: React.FC = () => {
   const [storyStep, setStoryStep] = useState<number>(0);
@@ -40,7 +41,6 @@ const Introduction: React.FC = () => {
       prompt: null,
     },
   ];
-  
 
   // Fetch the authenticated user and their `firstName`
   useEffect(() => {
@@ -152,23 +152,29 @@ const Introduction: React.FC = () => {
         ) : null}
         {currentStep.prompt && <p className="text-sm">{currentStep.prompt}</p>}
       </div>
-
-      {storyStep > 0 && (
-  <div className="absolute bottom-8 right-8 flex space-x-4">
-    <button
-      onClick={handlePrevious}
-      className="px-4 py-2 bg-gray-500 text-white rounded-lg shadow-md hover:bg-gray-600"
-    >
-      Previous
-    </button>
-    <button
-      onClick={handleNext}
-      className="px-4 py-2 bg-gray-500 text-white rounded-lg shadow-md hover:bg-gray-600"
-    >
-      Next
-    </button>
-  </div>
-)}
+      <div className="absolute bottom-8 right-8 flex space-x-4">
+        <button className="text-white py-2 px-4 rounded-lg">
+          <Link href="/landing" className="decoration-none">
+            Skip
+          </Link>
+        </button>
+        {storyStep > 0 && (
+          <button
+            onClick={handlePrevious}
+            className="text-white py-2 px-4 rounded-lg"
+          >
+            Previous
+          </button>
+        )}
+        {storyStep < 4 && (
+          <button
+            onClick={handleNext}
+            className="text-white py-2 px-4 rounded-lg"
+          >
+            Next
+          </button>
+        )}
+      </div>
     </div>
   );
 };
