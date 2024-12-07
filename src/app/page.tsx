@@ -89,6 +89,7 @@ const HomePage = () => {
       <h1 className="text-6xl font-serif font-bold italic text-white z-10 mb-10 pacifico-regular">
         Sky of Thoughts!
       </h1>
+      <p className="text-2xl font-bold  text-white z-10 mb-10 borel-regular">Place to share your thoughts and see what your friends have to say..</p>
       <h3 className="text-2xl font-bold  text-white z-10 mb-10 borel-regular">
       KIET - Batch-2025 🎉
       </h3>
