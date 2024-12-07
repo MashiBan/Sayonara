@@ -204,7 +204,7 @@ const LandingPage = () => {
                   }}
                 >
                  <p className="text-white font-bold italic text-2xl translate-y-10 translate-x-5">
-  {thought.thought.split(' ').slice(0, 2).join(' ')}...
+  {thought.thought.split(' ').slice(0, 1).join(' ')}...
 </p>
 
                 </motion.div>
