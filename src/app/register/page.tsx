@@ -81,7 +81,7 @@ const RegisterForm: React.FC = () => {
         <CardContent>
           <Input
             type="text"
-            placeholder="First Name"
+            placeholder="Don't use real Name"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
             className="mb-2 px-4 py-2 border border-gray-300 rounded"
