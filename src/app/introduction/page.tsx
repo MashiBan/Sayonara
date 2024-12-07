@@ -44,28 +44,41 @@ const Introduction: React.FC = () => {
   // Fetch the authenticated user and their `firstName`
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (!user || !user.emailVerified) {
-        router.push("/login");
-      } else {
-        setUser(user);
-
-        // Fetch `firstName` from Firestore
-        try {
-          const docRef = doc(firestore, "users", user.uid);
-          const docSnap = await getDoc(docRef);
-          if (docSnap.exists()) {
-            setFirstName(docSnap.data()?.firstName || "Anonymous");
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
+      try {
+        if (!user || !user.emailVerified) {
+          router.push("/login");
+          return;
         }
-
+  
+        setUser(user);
+  
+        // Email validation
+        const emailPattern = /^[a-zA-Z0-9._%+-]+\.2125[a-z]*[0-9]*@kiet\.edu$/;
+        if (!user.email || !emailPattern.test(user.email)) {
+          router.push("/login");
+          return;
+        }
+  
+        // Fetch user data from Firestore
+        const docRef = doc(firestore, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+  
+        if (docSnap.exists()) {
+          setFirstName(docSnap.data()?.firstName || "Anonymous");
+        } else {
+          console.warn("No user data found in Firestore for:", user.uid);
+        }
+  
+      } catch (error: any) {
+        console.error("An error occurred while fetching user data:", error.message || error);
+      } finally {
         setLoading(false);
       }
     });
-
+  
     return () => unsubscribe();
   }, [router]);
+  
 
   // Handle keypress to move the story forward
   useEffect(() => {
