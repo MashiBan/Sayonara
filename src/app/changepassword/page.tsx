@@ -1,61 +1,32 @@
 "use client"
-"use client";
 
 import { useState } from "react";
+import { sendPasswordResetEmail } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import {
-  reauthenticateWithCredential,
-  EmailAuthProvider,
-  updatePassword,
-} from "firebase/auth";
-import { auth } from "@/firebase/firebase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { toast } from "react-hot-toast";
+import { auth } from "@/firebase/firebase";
+import toast from "react-hot-toast";
+import Link from "next/link";
 
-const ChangePasswordPage = () => {
-  const [currentPassword, setCurrentPassword] = useState<string>("");
-  const [newPassword, setNewPassword] = useState<string>("");
-  const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const [error, setError] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
+const ChangePassword: React.FC = () => {
+  const [email, setEmail] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   const handleChangePassword = async (event: React.FormEvent) => {
     event.preventDefault();
     setError(null);
-    setMessage(null);
-
-    if (newPassword !== confirmPassword) {
-      toast.error("New password and confirm password do not match.");
-      return;
-    }
+    setLoading(true);
 
     try {
-      
-      const user = auth.currentUser;
-
-      if (!user || !user.email) {
-        toast.error("No user is currently signed in.");
-        return;
-      }
-
-      // Reauthenticate the user with the current password
-      const credential = EmailAuthProvider.credential(user.email, currentPassword);
-      await reauthenticateWithCredential(user, credential);
-
-      // Update the password
-      await updatePassword(user, newPassword);
-
-      toast.success("Password updated successfully!");
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
-      router.push("/"); 
-    } catch (error: any) {
-      toast.error(error.message || "Failed to update password.");
+      await sendPasswordResetEmail(auth, email);
+      toast.success("Password reset email sent! Please check your inbox.");
+      router.push("/login");
+    } catch (err: any) {
+      setError("Failed to send reset email. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -63,37 +34,21 @@ const ChangePasswordPage = () => {
 
   return (
     <div className="h-screen flex flex-col items-center justify-center bg-blue-200">
-      <h1 className="text-3xl font-semibold mb-8">Change Password</h1>
-      <Card>
+      <h1 className="text-6xl font-serif font-bold italic mb-20">Sayonara, Seniors!</h1>
+      <p className="text-2xl font-bold mb-10">KIET-25</p>
+      <Card className="max-w-md w-full">
         <CardHeader>
-          <h2 className="text-xl font-bold">Update Your Password</h2>
+          <h2 className="text-2xl font-bold">Change Your Password</h2>
         </CardHeader>
+
         <CardContent>
-          <Input
-            type="password"
-            placeholder="Current Password"
-            value={currentPassword}
-            onChange={(e) => setCurrentPassword(e.target.value)}
-            className="mb-2 px-4 py-2 border border-gray-300 rounded"
-            disabled={loading}
-            required
-          />
+          {error && <p className="text-red-500 mb-4">{error}</p>}
 
           <Input
-            type="password"
-            placeholder="New Password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            className="mb-2 px-4 py-2 border border-gray-300 rounded"
-            disabled={loading}
-            required
-          />
-
-          <Input
-            type="password"
-            placeholder="Confirm New Password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            type="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="mb-4 px-4 py-2 border border-gray-300 rounded"
             disabled={loading}
             required
@@ -101,15 +56,24 @@ const ChangePasswordPage = () => {
 
           <Button
             onClick={handleChangePassword}
-            className="px-4 py-2 rounded"
+            className="px-4 py-2 rounded w-full bg-blue-500 text-white hover:bg-blue-600"
             disabled={loading}
           >
-            {loading ? "Updating..." : "Change Password"}
+            {loading ? "Sending..." : "Send Reset Email"}
           </Button>
         </CardContent>
       </Card>
+
+      <div className="mt-4 text-center">
+        <p className="text-sm">
+          Remembered your password?{" "}
+          <Link href="/login" className="text-blue-600 hover:underline">
+            Login here
+          </Link>
+        </p>
+      </div>
     </div>
   );
 };
 
-export default ChangePasswordPage;
+export default ChangePassword;

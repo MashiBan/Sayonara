@@ -21,6 +21,9 @@ const LoginForm: React.FC = () => {
   // Regular expression to match emails like 'words.2125somewordnumber@kiet.edu'
   const emailPattern = /^[a-zA-Z0-9._%+-]+\.2125[a-z]*[0-9]*@kiet\.edu$/;
 
+  const handleChangePassword = async () => {
+    router.push("/changepassword");
+  };
 
   // Handle login
   const handleLogin = async (event: React.FormEvent) => {
@@ -31,6 +34,7 @@ const LoginForm: React.FC = () => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
+
 
       if (user.emailVerified) {
         const registrationData = localStorage.getItem("registrationData");
@@ -68,7 +72,7 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center bg-blue-200">
+    <div className="h-screen flex flex-col items-center justify-center bg-blue-300">
       <h1 className="text-6xl font-serif font-bold italic mb-20">Sayonara, Seniors!</h1>
       <p className="text-2xl font-bold mb-10">KIET-25</p>
       <Card>
@@ -116,6 +120,12 @@ const LoginForm: React.FC = () => {
             Register here
           </Link>
         </p>
+        <button
+          onClick={handleChangePassword}
+          className="text-white py-2 px-4 rounded-lg text-sm"
+        >
+          Change Password
+        </button>
         <p className="text-sm mt-3">
           Use your college email-id
         </p>

@@ -21,6 +21,11 @@ const RegisterForm: React.FC = () => {
   const [confetti, setConfetti] = useState<boolean>(false); // State for confetti trigger
   const router = useRouter();
 
+  //change password
+  const handleChangePassword = async () => {
+    router.push("/changepassword");
+  };
+
   // Handle registration
   const handleRegister = async () => {
     setLoading(true);
@@ -124,6 +129,12 @@ const RegisterForm: React.FC = () => {
             Log in here
           </Link>
         </p>
+        <button
+          onClick={handleChangePassword}
+          className="text-white py-2 px-4 rounded-lg text-sm"
+        >
+          Change Password
+        </button>
         <p className="text-sm mt-3">Use your college email-id</p>
         <p className="text-sm mt-6 underline">Please verify your email-id after registration.</p>
       </div>
