@@ -1,14 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation"; // Import useRouter hook
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { auth, firestore } from "@/firebase/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { collection, addDoc, getDoc, doc } from "firebase/firestore";
 import { Skeleton } from "@/components/ui/skeleton";
-import Link from "next/link";
 
 const Introduction: React.FC = () => {
   const [storyStep, setStoryStep] = useState<number>(0);
@@ -17,7 +16,7 @@ const Introduction: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [user, setUser] = useState<any>(null);
   const [firstName, setFirstName] = useState<string>("Anonymous");
-  const router = useRouter();
+  const router = useRouter(); // Initialize router
 
   const storySteps = [
     {
@@ -113,7 +112,7 @@ const Introduction: React.FC = () => {
         });
 
         setTimeout(() => {
-          router.push("/landing");
+          router.push("/landing"); // Redirect to landing page after submission
         }, 1000);
       } catch (error) {
         console.error("Error saving thought:", error);
@@ -153,10 +152,8 @@ const Introduction: React.FC = () => {
         {currentStep.prompt && <p className="text-sm">{currentStep.prompt}</p>}
       </div>
       <div className="absolute bottom-8 right-8 flex space-x-4">
-        <button className="text-white py-2 px-4 rounded-lg">
-          <Link href="/landing" className="decoration-none">
-            Skip
-          </Link>
+        <button onClick={() => router.push("/landing")} className="text-white py-2 px-4 rounded-lg"> {/* Redirect on button click */}
+          Skip
         </button>
         {storyStep > 0 && (
           <button
