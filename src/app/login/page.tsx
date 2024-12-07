@@ -19,7 +19,8 @@ const LoginForm: React.FC = () => {
   const router = useRouter();
 
   // Regular expression to match emails like 'words.2125somewordnumber@kiet.edu'
-  const emailPattern = /^[a-zA-Z0-9._%+-]+\.2125[a-z]+[0-9]+@kiet\.edu$/;
+  const emailPattern = /^[a-zA-Z0-9._%+-]+\.2125[a-z]*[0-9]*@kiet\.edu$/;
+
 
   // Handle login
   const handleLogin = async (event: React.FormEvent) => {
