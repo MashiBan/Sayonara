@@ -179,9 +179,9 @@ const LandingPage = () => {
             <HoverCard key={thought.key}>
               <HoverCardTrigger>
                 <motion.div
-                  className="absolute cursor-pointer rounded-full text-wrap border-white border-2 opacity-65"
+                  className="absolute cursor-pointer rounded-full text-right border-white border-2 opacity-65"
                   style={{
-                    fontSize: "1rem",
+                    fontSize: "0.5rem",
                     width: `${randomSize}px`,
                     height: `${randomSize}px`,
                     top: `${Math.random() * 90}vh`,
@@ -203,7 +203,7 @@ const LandingPage = () => {
                   }}
                 >
                   <p className="text-black bold italic text-2xl translate-y-10 translate-x-10">
-                    {thought.thought.slice(0, 20)}...
+                    {thought.thought.slice(0, 10)}...
                   </p>
                 </motion.div>
               </HoverCardTrigger>
