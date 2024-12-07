@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -9,29 +9,41 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { auth } from "@/firebase/firebase";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
-import ConfettiExplosion from "react-confetti-explosion";
 
 const RegisterForm: React.FC = () => {
   const [firstName, setFirstName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [error, setError] = useState<string>("");
-  const [message, setMessage] = useState<string>("");
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null); // State to store reCAPTCHA token
   const [loading, setLoading] = useState<boolean>(false);
-  const [confetti, setConfetti] = useState<boolean>(false); // State for confetti trigger
+  const [error, setError] = useState<string>("");
   const router = useRouter();
 
-  //change password
-  const handleChangePassword = async () => {
-    router.push("/changepassword");
+  useEffect(() => {
+    // Dynamically load the reCAPTCHA script after component mounts
+    const script = document.createElement("script");
+    script.src = "https://www.google.com/recaptcha/api.js";
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
+
+    // Clean up when the component unmounts
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
+  // Handle the reCAPTCHA change event
+  const handleRecaptchaChange = (token: string | null) => {
+    setRecaptchaToken(token);
   };
 
   // Handle registration
   const handleRegister = async () => {
     setLoading(true);
     try {
-      if (!firstName || !email || !password) {
-        setError("Please fill in all fields.");
+      if (!firstName || !email || !password || !recaptchaToken) {
+        setError("Please fill in all fields and complete the reCAPTCHA.");
         setLoading(false);
         return;
       }
@@ -41,7 +53,6 @@ const RegisterForm: React.FC = () => {
 
       await sendEmailVerification(user);
 
-      // Temporarily store user data in local storage
       localStorage.setItem(
         "registrationData",
         JSON.stringify({
@@ -50,21 +61,10 @@ const RegisterForm: React.FC = () => {
         })
       );
 
-      setMessage("Registration successful! Please check your email for verification");
-
-      // Trigger confetti
-      setConfetti(true);
-      setTimeout(() => setConfetti(false), 3000); // Reset confetti after 3 seconds
-
-      // Clear the form
-      setFirstName("");
-      setEmail("");
-      setPassword("");
-
       toast.success("Registration successful!");
       router.push("/login");
     } catch (err: any) {
-      setError(err.message); // Show error if registration fails
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -74,15 +74,12 @@ const RegisterForm: React.FC = () => {
     <div className="h-screen flex flex-col items-center justify-center bg-blue-300">
       <h1 className="text-6xl font-serif font-bold italic mb-20">Sayonara, Seniors!</h1>
       <p className="text-2xl font-bold mb-10">KIET-25</p>
-      
-      {/* Confetti Explosion */}
-      {confetti && <ConfettiExplosion />}
 
       <Card>
         <CardHeader>
           <h2 className="text-2xl font-bold">Welcome, Connect with friends!</h2>
         </CardHeader>
-        
+
         <CardContent>
           <Input
             type="text"
@@ -113,6 +110,16 @@ const RegisterForm: React.FC = () => {
             disabled={loading}
             required
           />
+
+          {/* Add reCAPTCHA widget */}
+          <div className="mb-4">
+            <div
+              className="g-recaptcha"
+              data-sitekey="6LdOGZUqAAAAAFMn2juRyT7nM2WYjlp-AwRpp-9v" // Replace with your actual Site Key
+              data-callback={handleRecaptchaChange}
+            ></div>
+          </div>
+
           <Button
             onClick={handleRegister}
             className="px-4 py-2 rounded"
@@ -122,6 +129,7 @@ const RegisterForm: React.FC = () => {
           </Button>
         </CardContent>
       </Card>
+
       <div className="mt-4 text-center">
         <p className="text-sm">
           Already have an account?{" "}
@@ -129,14 +137,6 @@ const RegisterForm: React.FC = () => {
             Log in here
           </Link>
         </p>
-        <button
-          onClick={handleChangePassword}
-          className="text-white py-2 px-4 rounded-lg text-sm"
-        >
-          Change Password
-        </button>
-        <p className="text-sm mt-3">Use your college email-id</p>
-        <p className="text-sm mt-6 underline">Please verify your email-id after registration.</p>
       </div>
     </div>
   );
