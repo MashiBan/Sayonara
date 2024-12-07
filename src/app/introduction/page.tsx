@@ -128,10 +128,10 @@ const Introduction: React.FC = () => {
   };
 
   const handleNext = () => {
-    if(storyStep < 4){
-      setStoryStep(storyStep + 1)
+    if (storyStep < 4) {
+      setStoryStep(storyStep + 1);
     }
-  }
+  };
 
   const currentStep = storySteps[storyStep];
 

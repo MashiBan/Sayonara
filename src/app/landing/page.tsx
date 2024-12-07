@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import { onAuthStateChanged, signOut, User } from "firebase/auth";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AiFillSound, AiOutlineSound } from "react-icons/ai";
+import toast from "react-hot-toast";
 
 const LandingPage = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -75,7 +76,7 @@ const LandingPage = () => {
         }));
         setThoughts(thoughtsData);
       } catch (error) {
-        console.error("Error fetching thoughts:", error);
+        toast.error(`Error fetching thoughts: ${(error as Error)?.message || "Unknown error"}`);
       }
     };
 

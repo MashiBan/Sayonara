@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/react"
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: "Sayonara, Seniors!",
@@ -26,6 +27,7 @@ export default function RootLayout({
         />
       </head>
       <body>
+      <Toaster position="top-right" reverseOrder={false} />
         {children}
         <Analytics />
       </body>
