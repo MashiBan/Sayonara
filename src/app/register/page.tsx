@@ -66,7 +66,7 @@ const RegisterForm: React.FC = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center bg-green-200">
+    <div className="h-screen flex flex-col items-center justify-center bg-blue-300">
       <h1 className="text-6xl font-serif font-bold italic mb-20">Sayonara, Seniors!</h1>
       <p className="text-2xl font-bold mb-10">KIET-25</p>
       

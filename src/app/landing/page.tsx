@@ -12,6 +12,7 @@ import {
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged, signOut, User } from "firebase/auth";
 import { Skeleton } from "@/components/ui/skeleton";
+import { AiFillSound, AiOutlineSound } from "react-icons/ai";
 
 const LandingPage = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -130,9 +131,9 @@ const LandingPage = () => {
   }
 
   return (
-    <div className="relative min-h-screen bg-blue-300 overflow-hidden">
-      <h1 className="text-center py-7 text-4xl font-serif italic text-white">
-        Batch of 25 🎉
+    <div className="relative min-h-screen bg-blue-400 overflow-hidden">
+      <h1 className="text-center py-7 text-4xl font-serif italic text-white bold pacifico-regular">
+        Batch of 25 🎓
       </h1>
 
       {/* Clouds */}
@@ -179,9 +180,9 @@ const LandingPage = () => {
             <HoverCard key={thought.key}>
               <HoverCardTrigger>
                 <motion.div
-                  className="absolute cursor-pointer rounded-full text-right border-white border-2 opacity-65"
+                  className="absolute cursor-pointer sacramento-regular rounded-full text-right border-white border-2 opacity-65"
                   style={{
-                    fontSize: "0.5rem",
+                    fontSize: "5px",
                     width: `${randomSize}px`,
                     height: `${randomSize}px`,
                     top: `${Math.random() * 90}vh`,
@@ -202,9 +203,10 @@ const LandingPage = () => {
                     ease: "easeInOut",
                   }}
                 >
-                  <p className="text-black bold italic text-2xl translate-y-10 translate-x-10">
-                    {thought.thought.slice(0, 10)}...
-                  </p>
+                 <p className="text-white font-bold italic text-2xl translate-y-10 translate-x-5">
+  {thought.thought.split(' ').slice(0, 2).join(' ')}...
+</p>
+
                 </motion.div>
               </HoverCardTrigger>
               <HoverCardContent className="top-5 left-5 p-5 bg-white shadow-md rounded-md absolute z-30">
@@ -255,7 +257,7 @@ const LandingPage = () => {
           onClick={handlePlayPauseAudio}
           className="text-white py-2 px-4 rounded-lg"
         >
-          {isPlaying ? "Pause Song" : "Play Song"}
+          {isPlaying ? <AiOutlineSound />: <AiFillSound />}
         </button>
       </div>
     </div>

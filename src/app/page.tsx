@@ -5,6 +5,8 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { AiFillSound } from "react-icons/ai";
+import { AiOutlineSound } from "react-icons/ai";
 
 // Sample image array
 const images = [
@@ -47,7 +49,27 @@ const images = [
 
 const HomePage = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
   const router = useRouter();
+
+   // Handle playing or pausing the audio
+   const handlePlayPauseAudio = () => {
+    if (isPlaying) {
+      // If audio is already playing, pause it
+      audio?.pause();
+      setIsPlaying(false);
+    } else {
+      // If audio is not playing, play it
+      const audioElement = new Audio("/song.mp3");
+      audioElement.loop = true;
+      audioElement.play().catch((error) => {
+        console.error("Error playing audio:", error);
+      });
+      setAudio(audioElement);
+      setIsPlaying(true);
+    }
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -64,16 +86,16 @@ const HomePage = () => {
       {/* Cloud background */}
 
       {/* Heading */}
-      <h1 className="text-6xl font-serif font-bold italic text-white z-10 mb-10">
+      <h1 className="text-6xl font-serif font-bold italic text-white z-10 mb-10 pacifico-regular">
         Sky of Thoughts!
       </h1>
-      <h3 className="text-2xl font-bold  text-white z-10 mb-10">
+      <h3 className="text-2xl font-bold  text-white z-10 mb-10 borel-regular">
       KIET - Batch-2025 🎉
       </h3>
       {/* Clouds */}
       <div className="absolute top-0 left-0 w-full h-full z-10 pointer-events-none">
         <motion.div
-          className="absolute w-80 h-80 bg-no-repeat bg-contain"
+          className="absolute w-44 h-44 bg-no-repeat bg-contain"
           style={{
             backgroundImage: "url('/cloud1.png')",
             top: "10%",
@@ -89,14 +111,14 @@ const HomePage = () => {
           }}
         />
         <motion.div
-          className="absolute w-96 h-96 bg-no-repeat bg-contain"
+          className="absolute w-44 h-44 bg-no-repeat bg-contain"
           style={{
             backgroundImage: "url('/cloud2.png')",
             top: "30%",
             left: "60%",
           }}
           animate={{
-            x: ["0vw", "-15vw", "0vw"],
+            x: ["0vw", "20vw", "0vw"],
           }}
           transition={{
             duration: 25,
@@ -109,7 +131,7 @@ const HomePage = () => {
           style={{
             backgroundImage: "url('/cloud3.png')",
             top: "70%",
-            left: "20%",
+            left: "25%",
           }}
           animate={{
             x: ["0vw", "10vw", "0vw"],
@@ -146,6 +168,7 @@ const HomePage = () => {
         >
           Register
         </Button>
+        
       </div>
       {/* Footer with text and beating heart */}
       <div className="absolute bottom-5 w-full flex justify-center items-center space-x-2">
@@ -172,6 +195,12 @@ const HomePage = () => {
           <span role="img" aria-label="heart">❤️</span>
         </motion.div>
       </div>
+      <button
+          onClick={handlePlayPauseAudio}
+          className="text-white py-2 px-4 rounded-lg"
+        >
+          {isPlaying ? <AiOutlineSound />: <AiFillSound />}
+        </button>
     </div>
   );
 };
