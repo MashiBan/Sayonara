@@ -79,7 +79,7 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-500 to-blue-900">
+    <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-500 to-blue-950">
       {/* Snow effect with customizable properties */}
       <Snowfall
         color="skyBlue"
