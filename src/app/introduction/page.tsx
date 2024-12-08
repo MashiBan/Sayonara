@@ -1,5 +1,4 @@
-"use client";
-
+"use client"
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation"; // Import useRouter hook
 import { Button } from "@/components/ui/button";
@@ -16,6 +15,46 @@ const Introduction: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [user, setUser] = useState<any>(null);
   const [firstName, setFirstName] = useState<string>("Anonymous");
+  const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
+  const images = [
+    "/image1.jpeg", 
+    "/image2.jpeg", 
+    "/image3.jpeg", 
+    "/image5.jpeg", 
+    "/image6.jpeg",
+    "/image7.jpeg", 
+    "/image8.jpeg", 
+    "/image9.jpeg",
+    "/image10.jpeg", 
+    "/image11.jpeg", 
+    "/image12.jpeg",
+    "/image13.jpeg", 
+    "/image14.jpeg", 
+    "/image15.jpeg",
+    "/image16.jpeg", 
+    "/image17.jpeg", 
+    "/image18.jpeg",
+    "/image19.jpeg",
+    "/image20.jpeg", 
+    "/image21.jpeg", 
+    "/image22.jpeg",
+    "/image23.jpeg", 
+    "/image24.jpeg", 
+    "/image25.jpeg",
+    "/image27.jpeg", 
+    "/image28.jpeg", 
+    "/image30.jpeg",
+    "/image31.jpeg", 
+    "/image32.jpeg", 
+    "/image33.jpeg",
+    "/image34.jpeg", 
+    "/image36.jpeg", 
+    "/image37.jpeg",
+    "/image38.jpeg", 
+    "/image40.jpeg", 
+    "/image43.jpeg",
+
+  ]; // Add paths to your images here
   const router = useRouter(); // Initialize router
 
   const storySteps = [
@@ -49,36 +88,35 @@ const Introduction: React.FC = () => {
           router.push("/login");
           return;
         }
-  
+
         setUser(user);
-  
+
         // Email validation
         const emailPattern = /^[a-zA-Z0-9._%+-]+\.2125[a-z]*[0-9]*@kiet\.edu$/;
         if (!user.email || !emailPattern.test(user.email)) {
           router.push("/login");
           return;
         }
-  
+
         // Fetch user data from Firestore
         const docRef = doc(firestore, "users", user.uid);
         const docSnap = await getDoc(docRef);
-  
+
         if (docSnap.exists()) {
           setFirstName(docSnap.data()?.firstName || "Anonymous");
         } else {
           console.warn("No user data found in Firestore for:", user.uid);
         }
-  
+
       } catch (error: any) {
         console.error("An error occurred while fetching user data:", error.message || error);
       } finally {
         setLoading(false);
       }
     });
-  
+
     return () => unsubscribe();
   }, [router]);
-  
 
   // Handle keypress to move the story forward
   useEffect(() => {
@@ -93,6 +131,15 @@ const Introduction: React.FC = () => {
       window.removeEventListener("keydown", handleKeyPress);
     };
   }, [storyStep]);
+
+  // Change the image at regular intervals (e.g., every 5 seconds)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+    }, 5000); // Change image every 5 seconds
+
+    return () => clearInterval(interval); // Clear interval when component unmounts
+  }, []);
 
   if (loading) {
     return (
@@ -149,7 +196,14 @@ const Introduction: React.FC = () => {
   const currentStep = storySteps[storyStep];
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center bg-blue-300 p-8 relative">
+    <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-b text-white from-blue-300 to-blue-500 p-8 relative">
+      {/* Image Rectangle */}
+      <img
+        src={images[currentImageIndex]}
+        alt="Story Image"
+        className="w-80 h-72 object-cover  mb-10 rounded-xl"
+      />
+
       <div className="text-center space-y-6">
         <h1 className="text-2xl italic font-bold">{currentStep.text}</h1>
         {storyStep === 3 && !inputSubmitted ? (

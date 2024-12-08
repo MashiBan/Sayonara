@@ -1,207 +1,199 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
-import { AiFillSound } from "react-icons/ai";
-import { AiOutlineSound } from "react-icons/ai";
+import { useRouter } from "next/navigation";
+import { AiFillSound, AiOutlineSound } from "react-icons/ai";
 
-// Sample image array
-const images = [
-  "/image1.jpeg",
-  "/image2.jpeg",
-  "/image3.jpeg",
-  "/image5.jpeg",
-  "/image6.jpeg",
-  "/image7.jpeg",
-  "/image8.jpeg",
-  "/image9.jpeg",
-  "/image10.jpeg",
-  "/image11.jpeg",
-  "/image12.jpeg",
-  "/image13.jpeg",
-  "/image14.jpeg",
-  "/image15.jpeg",
-  "/image16.jpeg",
-  "/image17.jpeg",
-  "/image18.jpeg",
-  "/image19.jpeg",
-  "/image20.jpeg",
-  "/image21.jpeg",
-  "/image22.jpeg",
-  "/image23.jpeg",
-  "/image24.jpeg",
-  "/image25.jpeg",
-  "/image27.jpeg",
-  "/image30.jpeg",
-  "/image34.jpeg",
-  "/image28.jpeg",
-  "/image31.jpeg",
-  "/image32.jpeg",
-  "/image33.jpeg",
-  "/image43.jpeg",
-  "/image42.jpeg",
-  "/image41.jpeg",
-  "/image40.jpeg",
-];
+const Sketch = dynamic(() => import("react-p5"), { ssr: false });
 
 const HomePage = () => {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
   const router = useRouter();
+  let angle: number;
 
-   // Handle playing or pausing the audio
-   const handlePlayPauseAudio = () => {
+  // State for managing music playback
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = React.useRef<HTMLAudioElement>(null);
+
+  // State for managing "thoughts"
+  const [thoughts, setThoughts] = useState<Thought[]>([]);
+
+  const handleMusicToggle = () => {
     if (isPlaying) {
-      // If audio is already playing, pause it
-      audio?.pause();
-      setIsPlaying(false);
+      audioRef.current?.pause();
     } else {
-      // If audio is not playing, play it
-      const audioElement = new Audio("/song.mp3");
-      audioElement.loop = true;
-      audioElement.play().catch((error) => {
-        console.error("Error playing audio:", error);
-      });
-      setAudio(audioElement);
-      setIsPlaying(true);
+      audioRef.current?.play();
     }
+    setIsPlaying(!isPlaying);
   };
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImageIndex((prevIndex) =>
-        prevIndex === images.length - 1 ? 0 : prevIndex + 1
-      );
-    }, 3000); // Change image every 3 seconds
+    // Initialize "thoughts" only once when the component mounts
+    const initialThoughts: Thought[] = [];
+    for (let i = 0; i < 60; i++) {
+      initialThoughts.push(new Thought());
+    }
+    setThoughts(initialThoughts);
+  }, []); // This empty dependency array ensures this runs only once when the component mounts
 
-    return () => clearInterval(interval); // Cleanup interval on unmount
-  }, []);
+  const setup = (p5: any, canvasParentRef: any) => {
+    p5.createCanvas(p5.windowWidth, p5.windowHeight).parent(canvasParentRef);
+    p5.colorMode(p5.HSB);
+    p5.angleMode(p5.DEGREES);
 
+    // Handle resizing of canvas when window is resized
+    p5.windowResized = () => {
+      p5.resizeCanvas(p5.windowWidth, p5.windowHeight);
+    };
+  };
+
+  const draw = (p5: any) => {
+    // Draw gradient background
+    drawGradient(p5, 200, 255, 80, 220, 255, 2);
+
+    angle = (p5.mouseX / p5.width) * 90;
+    angle = p5.min(angle, 90);
+
+    // Draw "thoughts"
+    thoughts.forEach((thought) => {
+      thought.update(p5.frameCount, p5);
+
+      // When a thought reaches the bottom, make it stay at the bottom
+      if (thought.posY > p5.height - thought.size) {
+        thought.posY = p5.height - thought.size; // Set the Y position to be at the bottom
+      }
+
+      thought.display(p5);
+    });
+
+    // Draw the tree
+    p5.translate(p5.width / 2, p5.height);
+    p5.stroke(15, 55, 205);
+    p5.strokeWeight(4);
+    p5.line(0, 0, 0, -200);
+    p5.translate(0, -200);
+    branch(150, 0, p5);
+  };
+
+  const branch = (h: number, level: number, p5: any) => {
+    p5.strokeWeight(2);
+    p5.stroke(level * 30, 55, 205);
+    h *= 0.66;
+
+    if (h > 2) {
+      p5.push();
+      p5.rotate(angle);
+      p5.line(0, 0, 0, -h);
+      p5.translate(0, -h);
+      branch(h, level + 1, p5);
+      p5.pop();
+
+      p5.push();
+      p5.rotate(-angle);
+      p5.line(0, 0, 0, -h);
+      p5.translate(0, -h);
+      branch(h, level + 1, p5);
+      p5.pop();
+    }
+  };
+
+  const drawGradient = (
+    p5: any,
+    startHue: number,
+    startSaturation: number,
+    startBrightness: number,
+    endHue: number,
+    endSaturation: number,
+    endBrightness: number
+  ) => {
+    p5.noFill();
+    for (let y = 0; y < p5.height; y++) {
+      const t = p5.map(y, 0, p5.height, 0, 1);
+      const h = p5.lerp(startHue, endHue, t);
+      const s = p5.lerp(startSaturation, endSaturation, t);
+      const b = p5.lerp(startBrightness, endBrightness, t);
+      p5.stroke(h, s, b);
+      p5.line(0, y, p5.width, y);
+    }
+  };
+
+  class Thought {
+    posX: number;
+    posY: number;
+    angle: number;
+    size: number;
+    driftX: number;
+    driftY: number;
+    color: any;  // Make sure it's a p5 color object
+  
+    constructor() {
+      this.posX = Math.random() * window.innerWidth; // Spread across the entire width
+      this.posY = Math.random() * -window.innerHeight; // Start above the canvas
+      this.angle = Math.random() * 360;
+      this.size = Math.random() * (15 - 5) + 5; // Smaller sizes for less prominent thoughts
+      this.driftX = Math.random() * 1 - 0.5; // Slower horizontal drift
+      this.driftY = Math.random() * 1 - 0.1; // Slower downward drift
+      // Generate the HSB color using p5.js
+      this.color = { h: Math.random() * 80 + 140, s: 100, b: 70 }; // Create a color object
+    }
+  
+    update(time: number, p5: any) {
+      // Update position
+      this.posX += this.driftX;
+      this.posY += this.driftY;
+  
+      // Wrap around horizontally if out of bounds
+      if (this.posX > p5.width) this.posX = 0;
+      if (this.posX < 0) this.posX = p5.width;
+  
+      // Reset position if it goes off-screen vertically
+      if (this.posY > p5.height) {
+        this.posY = -20; // Reset above the canvas
+        this.posX = Math.random() * p5.width; // Randomize horizontal position
+      }
+    }
+  
+    display(p5: any) {
+      // Use p5's color function to handle the color properly in HSB mode
+      const p5Color = p5.color(this.color.h, this.color.s, this.color.b); 
+      p5.fill(p5Color);  // Fill with the generated color
+      p5.noStroke();
+      p5.ellipse(this.posX, this.posY, this.size); // Draw the thought as a circle
+    }
+  }
+  
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-blue-300 relative overflow-hidden">
-      {/* Cloud background */}
-
-      {/* Heading */}
-      <h1 className="text-6xl font-serif font-bold italic text-white z-10 mb-10 pacifico-regular">
-        Sky of Thoughts!
-      </h1>
-      <p className="text-2xl font-bold  text-white z-10 mb-10 borel-regular">Place to share your thoughts and see what your friends have to say..</p>
-      <h3 className="text-2xl font-bold  text-white z-10 mb-10 borel-regular">
-      KIET - Batch-2025 🎉
-      </h3>
-      {/* Clouds */}
-      <div className="absolute top-0 left-0 w-full h-full z-10 pointer-events-none">
-        <motion.div
-          className="absolute w-44 h-44 bg-no-repeat bg-contain"
-          style={{
-            backgroundImage: "url('/cloud1.png')",
-            top: "10%",
-            left: "5%",
-          }}
-          animate={{
-            x: ["0vw", "20vw", "0vw"],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-        />
-        <motion.div
-          className="absolute w-44 h-44 bg-no-repeat bg-contain"
-          style={{
-            backgroundImage: "url('/cloud2.png')",
-            top: "30%",
-            left: "60%",
-          }}
-          animate={{
-            x: ["0vw", "20vw", "0vw"],
-          }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-        />
-        <motion.div
-          className="absolute w-64 h-64 bg-no-repeat bg-contain"
-          style={{
-            backgroundImage: "url('/cloud3.png')",
-            top: "70%",
-            left: "25%",
-          }}
-          animate={{
-            x: ["0vw", "10vw", "0vw"],
-          }}
-          transition={{
-            duration: 18,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-        />
+    <div className="flex flex-col items-center justify-center bg-sky-400 text-white h-screen w-screen overflow-hidden">
+      <div className="absolute z-10 top-14 text-center px-4 sm:px-8 md:px-16 lg:px-32 xl:px-48">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold pacifico-regular">The Sky of Thoughts</h1>
+        <p className="text-lg sm:text-xl md:text-2xl borel-regular mt-6 sm:mt-8 text-blue-100">
+          A place to branch out your creativity and share your stories.
+        </p>
+        <p className="text-lg sm:text-xl px-4 sm:px-8 md:px-72 mt-5 text-blue-200 borel-regular">
+          KIET-Batch 25
+        </p>
       </div>
-      {/* Image Rectangle */}
-      <div className="relative w-96 h-80 bg-gray-200 rounded-sm shadow-lg overflow-hidden mb-8 z-10">
-        <Image
-          src={images[currentImageIndex]}
-          alt={`Image ${currentImageIndex + 1}`}
-          fill
-          className="object-cover"
-          priority
-        />
+      <div className="absolute inset-0 z-0">
+        <Sketch setup={setup} draw={draw} />
       </div>
-
-      {/* Buttons */}
-      <div className="flex space-x-4 z-10">
-        <Button
-          onClick={() => router.push("/login")}
-          className="px-6 py-2 text-white rounded-lg"
-        >
+      <div className="absolute bottom-16 z-10 flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 items-center">
+        <Button onClick={() => router.push("/login")} className="px-6 py-2 text-black bg-white hover:bg-blue-200">
           Login
         </Button>
-        <Button
-          onClick={() => router.push("/register")}
-          className="px-6 py-2 text-white rounded-lg"
-        >
+        <Button onClick={() => router.push("/register")} className="px-6 py-2 text-black bg-white hover:bg-blue-200">
           Register
         </Button>
-        
+        <Button onClick={handleMusicToggle} className="px-6 py-2 text-black bg-white hover:bg-blue-200">
+          {isPlaying ? <AiFillSound /> : <AiOutlineSound />}
+        </Button>
       </div>
-      {/* Footer with text and beating heart */}
-      <div className="absolute bottom-5 w-full flex justify-center items-center space-x-2">
-        <motion.p
-          className="text-lg font-semibold text-white"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-        >
-          Made with love
-        </motion.p>
-        <motion.div
-          className="w-6 h-6 text-red-500"
-          animate={{
-            scale: [1, 1.2, 1], // Beat effect
-          }}
-          transition={{
-            duration: 3,
-            repeat: Infinity,
-            repeatType: "loop",
-            ease: "easeInOut",
-          }}
-        >
-          <span role="img" aria-label="heart">❤️</span>
-        </motion.div>
-      </div>
-      <button
-          onClick={handlePlayPauseAudio}
-          className="text-white py-2 px-4 rounded-lg"
-        >
-          {isPlaying ? <AiOutlineSound />: <AiFillSound />}
-        </button>
+      <footer className="absolute bottom-5 text-center text-gray-400 z-10 text-xs sm:text-sm md:text-base">
+        Made with ❤️ by Batch 2025
+      </footer>
+
+      {/* Music */}
+      <audio ref={audioRef} src="/song.mp3" loop />
     </div>
   );
 };

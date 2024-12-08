@@ -132,7 +132,7 @@ const LandingPage = () => {
   }
 
   return (
-    <div className="relative min-h-screen bg-blue-400 overflow-hidden">
+    <div className="relative min-h-screen bg-gradient-to-b from-blue-300 to-blue-400 overflow-hidden">
       <h1 className="text-center py-7 text-4xl font-serif italic text-white bold pacifico-regular">
         Batch of 25 🎓
       </h1>
