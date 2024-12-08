@@ -33,7 +33,7 @@ const ChangePassword: React.FC = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center bg-blue-300">
+    <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-500 to-blue-950">
       <h1 className="text-6xl font-serif font-bold italic mb-20">Sayonara, Seniors!</h1>
       <p className="text-2xl font-bold mb-10">KIET-25</p>
       <Card className="max-w-md w-full">

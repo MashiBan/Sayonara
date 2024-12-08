@@ -64,11 +64,11 @@ const Introduction: React.FC = () => {
     },
     {
       text: "As we near the finish line, it’s a great time to reflect. What memories have made you smile, and what moments have shaped you into who you are today?",
-      prompt: "Press Enter or Spacebar to continue...",
+      prompt: "",
     },
     {
       text: "This final semester is a chance to celebrate everything we’ve achieved and support each other as we take our next steps forward. What do you hope for, and how do you see us growing together?",
-      prompt: "Press Enter or Spacebar to continue...",
+      prompt: "",
     },
     {
       text: "Share your thoughts—your favorite memories, kind words, or even a little inspiration for everyone. Your story matters.",
