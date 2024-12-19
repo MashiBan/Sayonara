@@ -56,8 +56,6 @@ const LandingPage = () => {
           const userData = userDoc.data();
           setUserName(`${userData.firstName}`);
         }
-      } else {
-        router.push("/login");
       }
       setLoading(false);
     });
@@ -86,11 +84,9 @@ const LandingPage = () => {
   // Handle playing or pausing the audio
   const handlePlayPauseAudio = () => {
     if (isPlaying) {
-      // If audio is already playing, pause it
       audio?.pause();
       setIsPlaying(false);
     } else {
-      // If audio is not playing, play it
       const audioElement = new Audio("/song.mp3");
       audioElement.loop = true;
       audioElement.play().catch((error) => {
@@ -112,7 +108,7 @@ const LandingPage = () => {
 
   const handleHome = async () => {
     router.push("/");
-  }
+  };
   const handleChangePassword = async () => {
     router.push("/changepassword");
   };
@@ -204,10 +200,9 @@ const LandingPage = () => {
                     ease: "easeInOut",
                   }}
                 >
-                 <p className="text-white font-bold italic text-2xl translate-y-10 translate-x-5">
-  {thought.thought.split(' ').slice(0, 1).join(' ')}...
-</p>
-
+                  <p className="text-white font-bold italic text-2xl translate-y-10 translate-x-5">
+                    {thought.thought.split(' ').slice(0, 1).join(' ')}...
+                  </p>
                 </motion.div>
               </HoverCardTrigger>
               <HoverCardContent className="top-5 left-5 p-5 bg-white shadow-md rounded-md absolute z-30">
@@ -236,18 +231,22 @@ const LandingPage = () => {
 
       {/* Footer with buttons */}
       <div className="absolute bottom-0 left-0 w-full bg-transparent p-4 flex justify-center space-x-4 z-30">
-        <button
-          onClick={handleLogout}
-          className="text-white py-2 px-4 rounded-lg"
-        >
-          Logout
-        </button>
-        <button
-          onClick={handleChangePassword}
-          className="text-white py-2 px-4 rounded-lg"
-        >
-          Change Password
-        </button>
+        {user && (
+          <>
+            <button
+              onClick={handleLogout}
+              className="text-white py-2 px-4 rounded-lg"
+            >
+              Logout
+            </button>
+            <button
+              onClick={handleChangePassword}
+              className="text-white py-2 px-4 rounded-lg"
+            >
+              Change Password
+            </button>
+          </>
+        )}
         <button
           onClick={handleHome}
           className="text-white py-2 px-4 rounded-lg"
@@ -258,7 +257,7 @@ const LandingPage = () => {
           onClick={handlePlayPauseAudio}
           className="text-white py-2 px-4 rounded-lg"
         >
-          {isPlaying ? <AiOutlineSound />: <AiFillSound />}
+          {isPlaying ? <AiOutlineSound /> : <AiFillSound />}
         </button>
       </div>
     </div>

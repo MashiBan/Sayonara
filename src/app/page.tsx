@@ -181,8 +181,12 @@ const HomePage = () => {
         <Button onClick={() => router.push("/login")} className="px-6 py-2 text-black bg-white hover:bg-blue-200">
           Login
         </Button>
+        
         <Button onClick={() => router.push("/register")} className="px-6 py-2 text-black bg-white hover:bg-blue-200">
           Register
+        </Button>
+        <Button onClick={() => router.push("/landing")} className="px-6 py-2 text-black bg-white hover:bg-blue-200">
+          Skip
         </Button>
         <Button onClick={handleMusicToggle} className="px-6 py-2 text-black bg-white hover:bg-blue-200">
           {isPlaying ? <AiFillSound /> : <AiOutlineSound />}

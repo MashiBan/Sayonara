@@ -210,6 +210,7 @@ const Introduction: React.FC = () => {
           <div className="flex flex-col items-center space-y-4">
             <Textarea
               value={userInput}
+              className="text-black"
               onChange={(e) => setUserInput(e.target.value)}
               placeholder="thoughts?..."
             />
