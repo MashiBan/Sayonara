@@ -4,7 +4,7 @@ import { Analytics } from "@vercel/analytics/react"
 import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
-  title: "Sayonara, Seniors!",
+  title: "The Sky of Thoughts",
   description: "Share your memories!!",
   icons: {
     icon: "/S.png", 
