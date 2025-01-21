@@ -12,6 +12,10 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 import ConfettiExplosion from "react-confetti-explosion";
 import Snowfall from "react-snowfall"; // Snowfall package import
+import { ShootingStars } from "@/components/ui/shooting-stars";
+import { BackgroundLines } from "@/components/ui/background-lines";
+import ColourfulText from "@/components/ui/colourful-text";
+import { StarsBackground } from "@/components/ui/stars-background";
 
 const LoginForm: React.FC = () => {
   const [email, setEmail] = useState<string>("");
@@ -78,116 +82,86 @@ const LoginForm: React.FC = () => {
     }
   };
 
+  const handleHome = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => {
+    event.preventDefault();
+    router.push("/");
+  };
   return (
-    <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-500 to-blue-950">
-      {/* Snow effect with customizable properties */}
-      <Snowfall
-        color="skyBlue"
-        changeFrequency={0.01}
-        radius={[5, 10]}
-        speed={[0.2, 0.5]}
-        snowflakeCount={5}
-        opacity={[2, 3]}
-        wind={[0, -1]}
-      />
-
-<Snowfall
-        color="pink"
-        changeFrequency={0.01}
-        radius={[5, 10]}
-        speed={[0.2, 0.5]}
-        snowflakeCount={5}
-        opacity={[2, 3]}
-        wind={[0, -1]}
-      />
-
-<Snowfall
-        color="yellow"
-        changeFrequency={0.01}
-        radius={[5, 10]}
-        speed={[0.2, 0.5]}
-        snowflakeCount={5}
-        opacity={[2, 3]}
-        wind={[0, -1]}
-      />
-
-      <Snowfall
-        color="lightgreen"
-        changeFrequency={0.01}
-        radius={[5, 6]}
-        speed={[0.2, 0.5]}
-        snowflakeCount={10}
-        opacity={[2, 5]}
-        wind={[0, -1]}
-      />
-
-<div className="absolute z-10 top-14 text-center px-4 sm:px-8 md:px-16 lg:px-32 xl:px-48 ">
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold pacifico-regular text-white">The Sky of Thoughts</h1>
-        <p className="text-lg sm:text-xl md:text-2xl borel-regular mt-6 sm:mt-8 text-blue-100">
-          A place to branch out your creativity and share your stories.
-        </p>
-        <p className="text-lg sm:text-xl px-4 sm:px-8 md:px-72 mt-5 text-blue-200 borel-regular">
-          KIET-Batch 25
-        </p>
-      </div>
-
-      {/* Confetti Explosion */}
-      {confetti && <ConfettiExplosion />}
-
-      <Card className="mt-52">
-        <CardHeader>
-          <h2 className="text-2xl font-bold">Welcome Back! Log in to connect</h2>
-        </CardHeader>
-
-        <CardContent>
-          {error && <p className="text-red-500 mb-4">{error}</p>}
-
-          <Input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="mb-2 px-4 py-2 border border-gray-300 rounded"
-            disabled={loading}
-            required
-          />
-
-          <Input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="mb-4 px-4 py-2 border border-gray-300 rounded"
-            disabled={loading}
-            required
-          />
-
-          <Button
-            onClick={handleLogin}
-            className="px-4 py-2 rounded"
-            disabled={loading}
-          >
-            {loading ? "Logging in..." : "Log In"}
-          </Button>
-        </CardContent>
-      </Card>
-
-      <div className="mt-4 text-center">
-        <p className="text-sm text-white">
-          Don't have an account?{" "}
-          <Link href="/register" className="hover:underline text-white">
-            Register here
-          </Link>
-        </p>
-        <button
-          onClick={handleChangePassword}
+    <div className="h-screen w-screen bg-black flex flex-col items-center justify-center relative">
+    <h2 className="text-center text-white dark:to-white text-2xl md:text-4xl lg:text-7xl font-sans py-2 md:py-10 relative z-20 font-bold tracking-tight">
+      The Sky of <ColourfulText text="Thoughts" />25
+    </h2>
+  
+    {/* Card with increased z-index */}
+    <Card className="relative z-30">
+      <CardHeader>
+        <h2 className="text-2xl font-bold">Welcome Back! Log in to connect</h2>
+      </CardHeader>
+  
+      <CardContent>
+        {error && <p className="text-red-500 mb-4">{error}</p>}
+  
+        <Input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="mb-2 px-4 py-2 border border-gray-300 rounded"
+          disabled={loading}
+          required
+        />
+  
+        <Input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="mb-4 px-4 py-2 border border-gray-300 rounded"
+          disabled={loading}
+          required
+        />
+  
+        <Button
+          onClick={handleLogin}
+          className="px-4 py-2 rounded bg-pink-500 hover:bg-pink-600"
+          disabled={loading}
+        >
+          {loading ? "Logging in..." : "Log In"}
+        </Button>
+      </CardContent>
+    </Card>
+  
+    <div className="mt-4 text-center relative z-40">
+      <p className="text-sm text-white">
+        Don't have an account?{" "}
+        <Link href="/register" className="hover:underline text-white">
+          Register here
+        </Link>
+      </p>
+      <button
+        onClick={handleChangePassword}
+        className="text-white py-2 px-4 rounded-lg text-sm"
+      >
+        Change Password
+      </button>
+      <br/>
+      <button
+          onClick={handleHome}
           className="text-white py-2 px-4 rounded-lg text-sm"
         >
-          Change Password
+          Home
         </button>
-        <p className="text-sm mt-3 text-white">Use your college email-id</p>
-      </div>
+      <p className="text-sm mt-3 text-white">Use your college email-id</p>
     </div>
+  
+    <StarsBackground />
+    <ShootingStars />
+
+     {/* Footer */}
+     <footer className="absolute bottom-5 text-center text-gray-400 z-10 text-xs sm:text-sm md:text-base">
+        Made with ❤️ by Batch 2025
+      </footer>
+  </div>
   );
 };
 

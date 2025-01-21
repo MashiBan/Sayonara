@@ -10,14 +10,15 @@ import { auth } from "@/firebase/firebase";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
 import ConfettiExplosion from "react-confetti-explosion";
-import Snowfall from 'react-snowfall'; // Snowfall package import
+import { ShootingStars } from "@/components/ui/shooting-stars";
+import { StarsBackground } from "@/components/ui/stars-background";
+import ColourfulText from "@/components/ui/colourful-text";
 
 const RegisterForm: React.FC = () => {
   const [firstName, setFirstName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [error, setError] = useState<string>("");
-  const [message, setMessage] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [confetti, setConfetti] = useState<boolean>(false); // State for confetti trigger
   const router = useRouter();
@@ -28,8 +29,11 @@ const RegisterForm: React.FC = () => {
   };
 
   // Handle registration
-  const handleRegister = async () => {
+  const handleRegister = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setError(null);
     setLoading(true);
+
     try {
       if (!firstName || !email || !password) {
         setError("Please fill in all fields.");
@@ -51,9 +55,7 @@ const RegisterForm: React.FC = () => {
         })
       );
 
-      setMessage("Registration successful! Please check your email for verification");
-
-      // Trigger confetti
+      setError(null);
       setConfetti(true);
       setTimeout(() => setConfetti(false), 3000); // Reset confetti after 3 seconds
 
@@ -62,7 +64,9 @@ const RegisterForm: React.FC = () => {
       setEmail("");
       setPassword("");
 
-      toast.success("Registration successful!");
+      toast.success("Registration successful! Please check your email for verification.");
+
+      // Redirect to login page after successful registration
       router.push("/login");
     } catch (err: any) {
       setError(err.message); // Show error if registration fails
@@ -72,49 +76,23 @@ const RegisterForm: React.FC = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-b from-customBlue  to-blue-950">
-      {/* Snow effect with customizable properties */}
-      <Snowfall
-        color="skyBlue"                // Snowflake color
-        changeFrequency={0.01}        // Frequency of snowflake changes (slower changes)
-        radius={[2, 10]}              // Randomized radius of snowflakes between 5px and 10px
-        speed={[0.2, 0.5]}  
-        snowflakeCount={5}
-        opacity={[2,3]}  
-        wind={[0,-1]}      
-      />
-
-<Snowfall
-        color="lightgreen"                // Snowflake color
-        changeFrequency={0.01}        // Frequency of snowflake changes (slower changes)
-        radius={[2, 6]}              // Randomized radius of snowflakes between 5px and 10px
-        speed={[0.2, 0.5]}  
-        snowflakeCount={10}
-        opacity={[2,5]}  
-        wind={[0,-1]}      
-      />
-
-      
-      
-<div className="absolute z-10 top-14 text-center px-4 sm:px-8 md:px-16 lg:px-32 xl:px-48 ">
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold pacifico-regular text-white">The Sky of Thoughts</h1>
-        <p className="text-lg sm:text-xl md:text-2xl borel-regular mt-6 sm:mt-8 text-blue-100">
-          A place to branch out your creativity and share your stories.
-        </p>
-        <p className="text-lg sm:text-xl px-4 sm:px-8 md:px-72 mt-5 text-blue-200 borel-regular">
-          KIET-Batch 25
-        </p>
-      </div>
-      
+    <div className="h-screen w-screen bg-black flex flex-col items-center justify-center relative">
       {/* Confetti Explosion */}
       {confetti && <ConfettiExplosion />}
 
-      <Card className="mt-52">
+      <h2 className="text-center text-white dark:to-white text-2xl md:text-4xl lg:text-7xl font-sans py-2 md:py-10 relative z-20 font-bold tracking-tight">
+        The Sky of <ColourfulText text="Thoughts" />25
+      </h2>
+      
+      {/* Registration Card */}
+      <Card className="relative z-30">
         <CardHeader>
           <h2 className="text-2xl font-bold">Welcome, Connect with friends!</h2>
         </CardHeader>
         
         <CardContent>
+          {error && <p className="text-red-500 mb-4">{error}</p>}
+
           <Input
             type="text"
             placeholder="Name"
@@ -146,15 +124,16 @@ const RegisterForm: React.FC = () => {
           />
           <Button
             onClick={handleRegister}
-            className="px-4 py-2 rounded"
+            className="px-4 py-2 rounded bg-green-600 hover:bg-green-700"
             disabled={loading}
           >
             {loading ? "Registering..." : "Register"}
           </Button>
         </CardContent>
       </Card>
-      <div className="mt-4 text-center">
-        <p className="text-sm text-white">
+
+      <div className="mt-4 text-center z-30">
+        <p className="text-sm text-pink-500">
           Already have an account?{" "}
           <Link href="/login" className=" hover:underline text-white">
             Log in here
@@ -162,26 +141,25 @@ const RegisterForm: React.FC = () => {
         </p>
         <button
           onClick={handleChangePassword}
-          className="text-white py-2 px-4 rounded-lg text-sm"
+          className="text-green-500 py-2 px-4 rounded-lg text-sm"
         >
           Change Password
         </button>
         <p className="text-sm mt-3 text-white">Use your college email-id</p>
-        <p className="text-sm mt-6 underline text-white">Please verify your email-id after registration.</p>
+        <p className="text-lg mt-3 text-white">Please verify your email-id after registration.</p>
       </div>
+
+      {/* Background Effects */}
+      <StarsBackground />
+      <ShootingStars />
+
+
+       {/* Footer */}
+       <footer className="absolute bottom-5 text-center text-gray-400 z-10 text-xs sm:text-sm md:text-base">
+        Made with ❤️ by Batch 2025
+      </footer>
     </div>
   );
 };
 
 export default RegisterForm;
-
-
-
-
-
-
-
-
-
-
-

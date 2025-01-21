@@ -14,6 +14,9 @@ import { onAuthStateChanged, signOut, User } from "firebase/auth";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AiFillSound, AiOutlineSound } from "react-icons/ai";
 import toast from "react-hot-toast";
+import { StarsBackground } from "@/components/ui/stars-background";
+import { ShootingStars } from "@/components/ui/shooting-stars";
+import ColourfulText from "@/components/ui/colourful-text";
 
 const LandingPage = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -74,7 +77,9 @@ const LandingPage = () => {
         }));
         setThoughts(thoughtsData);
       } catch (error) {
-        toast.error(`Error fetching thoughts: ${(error as Error)?.message || "Unknown error"}`);
+        toast.error(
+          `Error fetching thoughts: ${(error as Error)?.message || "Unknown error"}`,
+        );
       }
     };
 
@@ -115,12 +120,12 @@ const LandingPage = () => {
 
   if (loading) {
     return (
-      <div className="h-screen flex items-center justify-center">
+      <div className="h-screen flex items-center justify-center bg-blue-900">
         <div className="flex flex-col space-y-3">
-          <Skeleton className="h-[125px] w-[250px] rounded-xl" />
+          <Skeleton className="h-[125px] w-[250px] rounded-xl bg-blue-950" />
           <div className="space-y-2">
-            <Skeleton className="h-4 w-[250px]" />
-            <Skeleton className="h-4 w-[200px]" />
+            <Skeleton className="h-4 w-[250px]  bg-blue-950" />
+            <Skeleton className="h-4 w-[200px]  bg-blue-950" />
           </div>
         </div>
       </div>
@@ -128,12 +133,13 @@ const LandingPage = () => {
   }
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-b from-blue-300 to-blue-400 overflow-hidden">
-      <h1 className="text-center py-7 text-4xl font-serif italic text-white bold pacifico-regular">
-        Batch of 25 🎓
+    <div className="relative min-h-screen overflow-hidden bg-blue-950">
+      <h1 className="text-center py-7 text-4xl w-auto bg-opacity-0 sacramento-regular  text-white bold ">
+        The Sky of <ColourfulText text="Thoughts" />
+        25
       </h1>
 
-      {/* Clouds */}
+      {/* Clouds
       <motion.div
         className="absolute w-96 h-96 bg-no-repeat bg-contain"
         style={{
@@ -165,7 +171,7 @@ const LandingPage = () => {
           repeat: Infinity,
           ease: "linear",
         }}
-      />
+      /> */}
 
       {/* Floating thoughts */}
       <div className="absolute top-0 left-0 w-full h-full z-20">
@@ -201,13 +207,13 @@ const LandingPage = () => {
                   }}
                 >
                   <p className="text-white font-bold italic text-2xl translate-y-10 translate-x-5">
-                    {thought.thought.split(' ').slice(0, 1).join(' ')}...
+                    {thought.thought.split(" ").slice(0, 1).join(" ")}...
                   </p>
                 </motion.div>
               </HoverCardTrigger>
-              <HoverCardContent className="top-5 left-5 p-5 bg-white shadow-md rounded-md absolute z-30">
+              <HoverCardContent className="top-5 left-5 p-3 bg-black shadow-md rounded-md absolute text-fuchsia-100 z-30">
                 <p className="text-lg font-semibold">{thought.thought}</p>
-                <p className="text-sm italic text-gray-500">
+                <p className="text-sm italic text-white">
                   - {thought.name || "Anonymous"}
                 </p>
                 {thought.allowcomments && (
@@ -219,7 +225,7 @@ const LandingPage = () => {
                           <p key={index} className="text-xs text-gray-600">
                             {comment.text}
                           </p>
-                        )
+                        ),
                       )}
                   </div>
                 )}
@@ -260,6 +266,8 @@ const LandingPage = () => {
           {isPlaying ? <AiOutlineSound /> : <AiFillSound />}
         </button>
       </div>
+      <StarsBackground />
+      <ShootingStars />
     </div>
   );
 };
