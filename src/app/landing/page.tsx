@@ -21,18 +21,21 @@ import ColourfulText from "@/components/ui/colourful-text";
 const LandingPage = () => {
   const [user, setUser] = useState<User | null>(null);
   const [thoughts, setThoughts] = useState<any[]>([]);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [userName, setUserName] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [openCard, setOpenCard] = useState<string | null>(null);
   const router = useRouter();
 
   const colors = [
-    "#FFFFE0", // Light Yellow
-    "#FFFACD", // Lemon Chiffon
+    "#f7f7b2", // Light Yellow
+    "#f7eb81", // Lemon Chiffon
     "#FAFAD2", // Light Goldenrod Yellow
-    "#FFEFD5", // Papaya Whip
-    "#FFE4B5", // Moccasin
+    "#f5cc89", // Papaya Whip
+    "#fac76e", // Moccasin
     "#FFD700", // Gold
     "#FFF8DC", // Cornsilk
     "#FDF5E6", // Old Lace
@@ -49,6 +52,14 @@ const LandingPage = () => {
     "#FF9AA2", // Pastel Red
     "#F1B6D4", // Powder Pink
   ];
+
+  useEffect(() => {
+    // Detect if the screen width is less than 768px (mobile)
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize(); // Call initially
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -86,6 +97,9 @@ const LandingPage = () => {
     fetchThoughts();
   }, []);
 
+  const handleToggle = () => {
+    if (isMobile) setIsOpen((prev) => !prev);
+  };
   // Handle playing or pausing the audio
   const handlePlayPauseAudio = () => {
     if (isPlaying) {
@@ -133,6 +147,7 @@ const LandingPage = () => {
   }
 
   return (
+    
     <div className="relative min-h-screen overflow-hidden bg-blue-950">
       <h1 className="text-center py-7 text-4xl w-auto bg-opacity-0 sacramento-regular  text-white bold ">
         The Sky of <ColourfulText text="Thoughts" />
@@ -174,14 +189,16 @@ const LandingPage = () => {
       /> */}
 
       {/* Floating thoughts */}
-      <div className="absolute top-0 left-0 w-full h-full z-20">
+      <div className="absolute top-0 left-50 right-50 bottom-50 w-80% h-80% z-20">
         {thoughts.map((thought) => {
+          
           const randomSize = Math.random() * 5 + 50;
           const randomColor = colors[Math.floor(Math.random() * colors.length)];
 
           return (
-            <HoverCard key={thought.key}>
-              <HoverCardTrigger>
+            <HoverCard  open={isMobile ? openCard === thought.key : undefined}>
+              <HoverCardTrigger  asChild
+    onClick={() => setOpenCard(openCard === thought.key ? null : thought.key)}>
                 <motion.div
                   className="absolute cursor-pointer sacramento-regular rounded-full text-right border-white border-2 opacity-65"
                   style={{
@@ -190,7 +207,7 @@ const LandingPage = () => {
                     height: `${randomSize}px`,
                     top: `${Math.random() * 90}vh`,
                     left: `${Math.random() * 90}vw`,
-                    transform: `translate(-50%, -50%)`,
+                    // transform: `translate(50%, 50%)`,
                     backgroundColor: randomColor,
                     animation: "shiver 2s infinite",
                   }}
@@ -211,7 +228,10 @@ const LandingPage = () => {
                   </p>
                 </motion.div>
               </HoverCardTrigger>
-              <HoverCardContent className="top-5 left-5 p-3 bg-black shadow-md rounded-md absolute text-fuchsia-100 z-30">
+            
+              <HoverCardContent 
+  className="relative top-0 right-1/2 transform translate-x-1/2 max-w-[90vw] max-h-[60vh] p-4  m-42  bottom-52 bg-black shadow-md rounded-md text-fuchsia-100 z-50 overflow-auto border border-white"
+>
                 <p className="text-lg font-semibold">{thought.thought}</p>
                 <p className="text-sm italic text-white">
                   - {thought.name || "Anonymous"}
