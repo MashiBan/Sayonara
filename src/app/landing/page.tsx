@@ -157,7 +157,7 @@ const LandingPage = () => {
         25
         </h1>
         <p className="opacity-70">
-        <TextGenerateEffect duration={10} filter={true} words={words}/>;
+        <TextGenerateEffect duration={7} filter={true} words={words}/>;
         </p>
       </div>
 
