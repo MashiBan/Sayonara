@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { auth, firestore } from "@/firebase/firebase";
 import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { motion } from "framer-motion";
+import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
 import {
   HoverCard,
   HoverCardContent,
@@ -30,6 +31,7 @@ const LandingPage = () => {
   const [openCard, setOpenCard] = useState<string | null>(null);
   const router = useRouter();
 
+  const words = `Hover on thoughts , to view them`;
   const colors = [
     "#f7f7b2", // Light Yellow
     "#f7eb81", // Lemon Chiffon
@@ -149,10 +151,15 @@ const LandingPage = () => {
   return (
     
     <div className="relative min-h-screen overflow-hidden bg-blue-950">
-      <h1 className="text-center py-7 text-4xl w-auto bg-opacity-0 sacramento-regular  text-white bold ">
+      <div className="text-center py-7 text-4xl w-auto bg-opacity-0 sacramento-regular  text-white bold ">
+        <h1>
         The Sky of <ColourfulText text="Thoughts" />
         25
-      </h1>
+        </h1>
+        <p className="opacity-70">
+        <TextGenerateEffect duration={10} filter={true} words={words}/>;
+        </p>
+      </div>
 
       {/* Clouds
       <motion.div

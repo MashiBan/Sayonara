@@ -28,6 +28,7 @@ const LoginForm: React.FC = () => {
   // Regular expression to match emails like 'words.2125somewordnumber@kiet.edu'
   const emailPattern = /^[a-zA-Z0-9._%+-]+\.2125[a-z]*[0-9]*@kiet\.edu$/;
 
+
   // Change password
   const handleChangePassword = async () => {
     router.push("/changepassword");
@@ -70,7 +71,7 @@ const LoginForm: React.FC = () => {
         if (emailPattern.test(email)) {
           router.push("/introduction");
         } else {
-          router.push("/landing");
+          router.push("/introduction");
         }
       } else {
         setError("Please verify your email before logging in.");

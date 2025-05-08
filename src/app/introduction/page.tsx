@@ -20,44 +20,9 @@ const Introduction: React.FC = () => {
   const [user, setUser] = useState<any>(null);
   const [firstName, setFirstName] = useState<string>("Anonymous");
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
-  const images = [
-    "/image1.jpeg",
-    "/image2.jpeg",
-    "/image3.jpeg",
-    "/image4.jpeg",
-    "/image5.jpeg",
-    "/image6.jpeg",
-    "/image7.jpeg",
-    "/image8.jpeg",
-    "/image10.jpeg",
-    "/image11.jpeg",
-    "/image12.jpeg",
-    "/image13.jpeg",
-    "/image14.jpeg",
-    "/image15.jpeg",
-    "/image16.jpeg",
-    "/image17.jpeg",
-    "/image18.jpeg",
-    "/image19.jpeg",
-    "/image20.jpeg",
-    "/image21.jpeg",
-    "/image22.jpeg",
-    "/image23.jpeg",
-    "/image24.jpeg",
-    "/image25.jpeg",
-    "/image27.jpeg",
-    "/image28.jpeg",
-    "/image30.jpeg",
-    "/image31.jpeg",
-    "/image32.jpeg",
-    "/image33.jpeg",
-    "/image34.jpeg",
-    "/image36.jpeg",
-    "/image35.jpeg",
-    "/image29.jpeg",
-    "/image26.jpeg",
-    "/image9.jpeg",
-  ];
+  const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
+
+  const images = ["/1.png", "/2.png", "/3.png", "/4.png", "/5.png"];
 
   const router = useRouter();
 
@@ -71,7 +36,7 @@ const Introduction: React.FC = () => {
       prompt: "",
     },
     {
-      text: "This final semester is a chance to celebrate everything we’ve achieved and support each other as we take our next steps forward. What do you hope for, and how do you see us growing together?",
+      text: "Our final semester is now behind us—a time filled with milestones, memories, and growth. As we step into the next chapter, what are your hopes, dreams, and reflections for the road ahead?",
       prompt: "",
     },
     {
@@ -95,14 +60,11 @@ const Introduction: React.FC = () => {
         setUser(user);
 
         const emailPattern = /^[a-zA-Z0-9._%+-]+\.2125[a-z]*[0-9]*@kiet\.edu$/;
-        if (!user.email || !emailPattern.test(user.email)) {
-          router.push("/login");
-          return;
-        }
+        const authorized = !!user.email && emailPattern.test(user.email!);
+        setIsAuthorized(authorized);
 
         const docRef = doc(firestore, "users", user.uid);
         const docSnap = await getDoc(docRef);
-
         if (docSnap.exists()) {
           setFirstName(docSnap.data()?.firstName || "Anonymous");
         }
@@ -118,16 +80,18 @@ const Introduction: React.FC = () => {
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
-      if ((e.key === "Enter" || e.key === " ") && storyStep < 3) {
-        setStoryStep(storyStep + 1);
+      if ((e.key === "Enter" || e.key === " ") && storyStep < (isAuthorized ? 4 : 3)) {
+        setStoryStep((prev) => prev + 1);
+      }
+
+      if (!isAuthorized && storyStep === 3) {
+        router.push("/landing");
       }
     };
 
     window.addEventListener("keydown", handleKeyPress);
-    return () => {
-      window.removeEventListener("keydown", handleKeyPress);
-    };
-  }, [storyStep]);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, [storyStep, isAuthorized, router]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -168,56 +132,91 @@ const Introduction: React.FC = () => {
     }
   };
 
-  const handlePrevious = () => storyStep > 0 && setStoryStep(storyStep - 1);
-  const handleNext = () => storyStep < 4 && setStoryStep(storyStep + 1);
-
   return (
-    <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-b text-white bg-black p-8 relative">
-      <div className="mb-10 relative z-10">
-        <BackgroundGradient className="w-80 h-72 object-cover rounded-xl">
-          <img
-            src={images[currentImageIndex]}
-            alt="Story Image"
-            className="w-80 h-72 object-cover rounded-xl"
-          />
-        </BackgroundGradient>
+    <div className="relative w-full h-screen text-white overflow-hidden">
+      <StarsBackground />
+      <ShootingStars />
+
+      {/* Two images side by side */}
+      <div className="absolute top-0 left-0 w-full h-full flex -z-1 bg-blue-950">
+        <img
+          src={images[currentImageIndex]}
+          alt="Background Left"
+          className="w-1/2 h-full object-cover opacity-50"
+        />
+        <img
+          src={images[(currentImageIndex + 1) % images.length]}
+          alt="Background Right"
+          className="w-1/2 h-full object-cover opacity-50"
+        />
       </div>
 
-      <div className="text-center space-y-6 relative z-20">
-        <h1 className="text-2xl italic font-bold">{storySteps[storyStep].text}</h1>
-        {storyStep === 3 && !inputSubmitted && (
-          <div className="flex flex-col items-center space-y-4">
-            <Textarea
-              value={userInput}
-              onChange={(e) => setUserInput(e.target.value)}
-              placeholder="Share your thoughts..."
-              className="text-black"
-            />
-            <Button onClick={handleSubmit} className="bg-purple-600 hover:bg-purple-700">
-              Submit
-            </Button>
-          </div>
-        )}
-        {storySteps[storyStep].prompt && <p className="text-sm">{storySteps[storyStep].prompt}</p>}
-      </div>
+      <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center text-center z-10 px-6">
+      <BackgroundGradient className="p-8 rounded-xl max-w-2xl  border-white shadow-[0_0_10px_2px_rgba(255,255,255,0.8)]">
+  <h1 className="text-center py-7 text-4xl w-auto bg-opacity-0 lobster-regular">{storySteps[storyStep].text}</h1>
 
-      <div className="absolute bottom-8 right-8 flex space-x-4 z-30">
-        <button onClick={() => router.push("/landing")} className="text-white py-2 px-4 rounded-lg">
-          Skip
-        </button>
-        {storyStep > 0 && (
-          <button onClick={handlePrevious} className="text-white py-2 px-4 rounded-lg">
-            Previous
-          </button>
-        )}
-        {storyStep < 4 && (
-          <button onClick={handleNext} className="text-white py-2 px-4 rounded-lg">
-            Next
-          </button>
-        )}
+  {storySteps[storyStep].prompt && (
+    <p className="text-gray-300 mb-6">{storySteps[storyStep].prompt}</p>
+  )}
+
+  {/* Input field and submit button for authorized users on step 3 */}
+  {storyStep === 3 && (
+  <>
+    {isAuthorized && !inputSubmitted ? (
+      <>
+        <Textarea
+          placeholder="Write your thoughts..."
+          value={userInput}
+          onChange={(e) => setUserInput(e.target.value)}
+          className="mb-4 text-black"
+        />
+        <Button
+          onClick={handleSubmit}
+          disabled={!userInput.trim()}
+          className="mb-4"
+        >
+          Submit
+        </Button>
+      </>
+    ) : !isAuthorized ? (
+      <p className="text-white font-semibold mb-4">
+        You are not authorized to add a message.
+      </p>
+    ) : null}
+  </>
+)}
+
+
+  {/* Navigation Buttons */}
+  <div className="flex justify-center gap-4 mt-4">
+    <Button
+      onClick={() => setStoryStep((prev) => Math.max(prev - 1, 0))}
+      disabled={storyStep === 0}
+      variant="ghost"
+    >
+      Previous
+    </Button>
+    <Button
+      onClick={() =>
+        setStoryStep((prev) =>
+          Math.min(prev + 1, isAuthorized ? storySteps.length - 1 : 3)
+        )
+      }
+      disabled={storyStep === (isAuthorized ? storySteps.length - 1 : 3)}
+      variant="ghost"
+    >
+      Next
+    </Button>
+    <Button
+     onClick={() => router.push("/landing")}
+      variant="ghost"
+    >
+      Skip
+    </Button>
+  </div>
+</BackgroundGradient>
+
       </div>
-      <StarsBackground className="absolute inset-0 z-0" />
-      <ShootingStars className="absolute inset-0 z-0" />
     </div>
   );
 };
