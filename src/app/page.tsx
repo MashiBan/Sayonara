@@ -33,7 +33,7 @@ const HomePage = () => {
         <Button onClick={() => router.push("/register")} className="px-6 py-2 text-black bg-green-500 hover:bg-green-600">
           Register
         </Button>
-        <Button onClick={() => router.push("/landing")} className="px-6 py-2 text-black bg-yellow-500 hover:bg-yellow-600">
+        <Button onClick={() => router.push("/introduction")} className="px-6 py-2 text-black bg-yellow-500 hover:bg-yellow-600">
           Skip
         </Button>
       </div>

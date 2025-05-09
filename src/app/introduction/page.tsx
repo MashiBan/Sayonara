@@ -23,7 +23,6 @@ const Introduction: React.FC = () => {
   const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
 
   const images = ["/1.png", "/2.png", "/3.png", "/4.png", "/5.png"];
-
   const router = useRouter();
 
   const storySteps = [
@@ -50,20 +49,24 @@ const Introduction: React.FC = () => {
   ];
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
       try {
-        if (!user || !user.emailVerified) {
-          router.push("/login");
+        if (!authUser || !authUser.emailVerified) {
+          // Treat as guest
+          setUser({ email: "guest@guest.com", uid: "guest" });
+          setFirstName("Guest");
+          setIsAuthorized(false);
+          setLoading(false);
           return;
         }
 
-        setUser(user);
+        setUser(authUser);
 
         const emailPattern = /^[a-zA-Z0-9._%+-]+\.2125[a-z]*[0-9]*@kiet\.edu$/;
-        const authorized = !!user.email && emailPattern.test(user.email!);
+        const authorized = !!authUser.email && emailPattern.test(authUser.email);
         setIsAuthorized(authorized);
 
-        const docRef = doc(firestore, "users", user.uid);
+        const docRef = doc(firestore, "users", authUser.uid);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setFirstName(docSnap.data()?.firstName || "Anonymous");
@@ -137,7 +140,6 @@ const Introduction: React.FC = () => {
       <StarsBackground />
       <ShootingStars />
 
-      {/* Two images side by side */}
       <div className="absolute top-0 left-0 w-full h-full flex -z-1 bg-blue-950">
         <img
           src={images[currentImageIndex]}
@@ -152,70 +154,67 @@ const Introduction: React.FC = () => {
       </div>
 
       <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center text-center z-10 px-6">
-      <BackgroundGradient className="p-8 rounded-xl max-w-2xl  border-white shadow-[0_0_10px_2px_rgba(255,255,255,0.8)]">
-  <h1 className="text-center py-7 text-4xl w-auto bg-opacity-0 lobster-regular">{storySteps[storyStep].text}</h1>
+        <BackgroundGradient className="p-8 rounded-xl max-w-2xl border-white shadow-[0_0_10px_2px_rgba(255,255,255,0.8)]">
+          <h1 className="text-center py-7 text-4xl w-auto bg-opacity-0 lobster-regular">
+            {storySteps[storyStep].text}
+          </h1>
 
-  {storySteps[storyStep].prompt && (
-    <p className="text-gray-300 mb-6">{storySteps[storyStep].prompt}</p>
-  )}
+          {storySteps[storyStep].prompt && (
+            <p className="text-gray-300 mb-6">{storySteps[storyStep].prompt}</p>
+          )}
 
-  {/* Input field and submit button for authorized users on step 3 */}
-  {storyStep === 3 && (
-  <>
-    {isAuthorized && !inputSubmitted ? (
-      <>
-        <Textarea
-          placeholder="Write your thoughts..."
-          value={userInput}
-          onChange={(e) => setUserInput(e.target.value)}
-          className="mb-4 text-black"
-        />
-        <Button
-          onClick={handleSubmit}
-          disabled={!userInput.trim()}
-          className="mb-4"
-        >
-          Submit
-        </Button>
-      </>
-    ) : !isAuthorized ? (
-      <p className="text-white font-semibold mb-4">
-        You are not authorized to add a message.
-      </p>
-    ) : null}
-  </>
-)}
+          {storyStep === 3 && (
+            <>
+              {isAuthorized && !inputSubmitted ? (
+                <>
+                  <Textarea
+                    placeholder="Write your thoughts..."
+                    value={userInput}
+                    onChange={(e) => setUserInput(e.target.value)}
+                    className="mb-4 text-black"
+                  />
+                  <Button
+                    onClick={handleSubmit}
+                    disabled={!userInput.trim()}
+                    className="mb-4"
+                  >
+                    Submit
+                  </Button>
+                </>
+              ) : !isAuthorized ? (
+                <p className="text-white font-semibold mb-4">
+                  You are not authorized to add a message.
+                </p>
+              ) : null}
+            </>
+          )}
 
-
-  {/* Navigation Buttons */}
-  <div className="flex justify-center gap-4 mt-4">
-    <Button
-      onClick={() => setStoryStep((prev) => Math.max(prev - 1, 0))}
-      disabled={storyStep === 0}
-      variant="ghost"
-    >
-      Previous
-    </Button>
-    <Button
-      onClick={() =>
-        setStoryStep((prev) =>
-          Math.min(prev + 1, isAuthorized ? storySteps.length - 1 : 3)
-        )
-      }
-      disabled={storyStep === (isAuthorized ? storySteps.length - 1 : 3)}
-      variant="ghost"
-    >
-      Next
-    </Button>
-    <Button
-     onClick={() => router.push("/landing")}
-      variant="ghost"
-    >
-      Skip
-    </Button>
-  </div>
-</BackgroundGradient>
-
+          <div className="flex justify-center gap-4 mt-4">
+            <Button
+              onClick={() => setStoryStep((prev) => Math.max(prev - 1, 0))}
+              disabled={storyStep === 0}
+              variant="ghost"
+            >
+              Previous
+            </Button>
+            <Button
+              onClick={() =>
+                setStoryStep((prev) =>
+                  Math.min(prev + 1, isAuthorized ? storySteps.length - 1 : 3)
+                )
+              }
+              disabled={
+                storyStep === (isAuthorized ? storySteps.length - 1 : 3)
+              }
+              variant="ghost"
+            >
+              Next
+            </Button>
+            <Button onClick={() => router.push("/landing")} variant="ghost">
+              Skip
+            </Button>
+          </div>
+        </BackgroundGradient>
       </div>
     </div>
   );
