@@ -28,7 +28,7 @@ const Introduction: React.FC = () => {
   const storySteps = [
     {
       text: "Can you believe how far we’ve come? These years have been a mix of highs and lows, lessons and laughter, and moments that will stay with us forever.",
-      prompt: "Press Enter or Spacebar to continue...",
+      prompt: "",
     },
     {
       text: "As we near the finish line, it’s a great time to reflect. What memories have made you smile, and what moments have shaped you into who you are today?",
@@ -81,20 +81,7 @@ const Introduction: React.FC = () => {
     return () => unsubscribe();
   }, [router]);
 
-  useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
-      if ((e.key === "Enter" || e.key === " ") && storyStep < (isAuthorized ? 4 : 3)) {
-        setStoryStep((prev) => prev + 1);
-      }
-
-      if (!isAuthorized && storyStep === 3) {
-        router.push("/landing");
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyPress);
-    return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [storyStep, isAuthorized, router]);
+  // Removed spacebar/Enter navigation effect
 
   useEffect(() => {
     const interval = setInterval(() => {
